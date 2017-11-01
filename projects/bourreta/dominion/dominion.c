@@ -7,7 +7,7 @@
 
 int adventurerEffect(int drawntreasure, struct gameState *state, int currentPlayer, int cardDrawn, int temphand[]){
     
-    int z;
+    int z = 0;
     //BUG ADDED IN LINE BELOW | ORIGINAL: while(drawntreasure<2){  -->  BUG: while(drawntreasure<=2){
     while(drawntreasure<=2){
         if (state->deckCount[currentPlayer] <1){//if the deck is empty we need to shuffle discard and add to deck
@@ -35,8 +35,8 @@ int adventurerEffect(int drawntreasure, struct gameState *state, int currentPlay
 int smithyEffect(int currentPlayer, struct gameState *state, int handPos){
     int i;
     //+3 Cards
-    //BUG ADDED IN LINE BELOW | ORIGINAL: for (i = 0; i < 3; i++)  -->  BUG: for (i = 0; i < 3; i--)
-    for (i = 0; i < 3; i--)
+    //BUG ADDED IN LIN BELOW | ORIGINAL: for(i = 0; i < 3; i++) ---> BUG: for(i = 1; i < 3; i++)
+    for (i = 1; i < 3; i++)
     {
         drawCard(currentPlayer, state);
     }
@@ -91,7 +91,7 @@ int mineEffect(struct gameState *state, int choice1, int choice2, int currentPla
         {
             discardCard(i, currentPlayer, state, 0);
             //BUG ADDED IN LINE BELOW | ORIGINAL:     break; --> BUG: //break; removed
-            //break; removed
+            //break; //removed
         }
     }
     
