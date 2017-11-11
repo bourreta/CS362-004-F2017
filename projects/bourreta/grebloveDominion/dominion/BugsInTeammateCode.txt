@@ -1,0 +1,189 @@
+———***BUG #1***—————
+Title:   Draw card bug in smithyCase() function affecting game play
+
+Class: Minor Bug
+
+Date:       11/10/2017    
+Reported By:   Andrew Bourret
+Email:      bourreta@oregonstate.edu
+
+Product:   Dominion            Version: N/A
+Platform:  Linux    Version: Linux flip1.engr.oregonstate.edu 3.10.0-514.26.2.el7.x86_64 #1 SMP Tue Jul 4 15:04:05 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux
+Browser:   N/A                 Version: N/A
+URL:       https://github.com/bourreta/CS362-004-F2017/tree/bourreta-assignment-5/projects/bourreta/grebloveDominion/dominion
+
+Is it reproducible: Yes 
+
+Description
+===========
+Testing of the smithy card function revealed a bug in the quantity of cards drawn. When played, the smithy card should move 3 cards form the player’s deck to the player’s hand. Instead, it appears four cards are moved instead. 
+
+Steps to Produce/Reproduce
+--------------------------
+If playing the game, using the smithy card will reproduce the bug. 
+
+To reproduce the bug with access to the code:
+1. Initialize a gameState struct with known values. Default values from initializeGame() function will work well. 
+2. Pass the struct pointer, the number of the smithy card, and hand position of the card to the cardEffect function. Other parameters can be 0 or NULL. 
+3. Compare the quantity of cards in the player’s hand before the function call and after the function call, accounting for discards. 
+4. Also, compare the quantity of cards in the player’s deck before the function call and after the function call.
+
+An example of this test case can be found in cardtest2.c 
+
+Expected Results
+----------------
+The gameState.handCount[playerNumber] variable is incremented by a total of two after the smithy card is played and discarded (three cards drawn, one discarded). 
+Ex. If the player hand has 6 cards, then it should have 8 after the card is played.
+
+The gameState.deckCount[playerNumber] variable is decremented by three after the smithy card is played. 
+Ex. If the player has 5 cards in their deck, then they should have 2 cards in their deck after the card is played. 
+
+
+Actual Results
+--------------
+gameState.handCount[playerNumber] is 9. This is too high, the player’s hand has one more card than it should. 
+gameState.deckCount[playerNumber] is 1. This is too low, the player’s deck has one less card than it should.
+
+Workarounds/Fixes
+-----------
+There are no workarounds if you don’t have access to the source code. 
+
+If you have access to dominion.c, correct the loop condition on line 677 to run while i is less than 3
+for (i = 0; i < 3; i++)
+
+Attachments
+-----------
+
+See unittestresult.out file for test of smithy card. 
+
+See cardtest2.c for an example test case that successfully reproduces this bug. 
+
+
+Other Information
+-----------------
+Other tests appear to pass. Smithy card is removed from player hand and placed in discard/playedCard pile. 
+
+
+———***BUG #2***—————
+Title:    Bug in council_roomCase() draw card functionality for current and non-current player
+
+Class: Moderate Bug
+
+Date:       11/10/2017    
+Reported By:   Andrew Bourret
+Email:      bourreta@oregonstate.edu
+
+Product:   Dominion            Version: N/A
+Platform:  OSU Linux Server    Version: Linux flip1.engr.oregonstate.edu 3.10.0-514.26.2.el7.x86_64 #1 SMP Tue Jul 4 15:04:05 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux
+Browser:   N/A                 Version: N/A
+URL:       https://github.com/bourreta/CS362-004-F2017/tree/bourreta-assignment-5/projects/bourreta/grebloveDominion/dominion
+
+Is it reproducible: Yes
+
+Description
+===========
+Testing the council_room card function revealed a bug in the way cards are drawn. According to the rules of the game, the current player who plays the council room card should draw four cards and each other non-current player should draw one card. Instead, each non-current player does not draw any cards, and the current player appears to draw five cards. 
+
+Steps to Produce/Reproduce
+--------------------------
+If merely playing the game, playing the council_room card will reproduce the bug. 
+
+To reproduce the bug with access to the code:
+1. Initialize a gameState struct with known values. Default values from initializeGame() function will work well. 
+2. Pass the struct pointer, the number of the council_room card, and hand position of the card to the cardEffect function. Other parameters can be 0 or NULL. 
+3. Compare the quantity of cards in the player’s hand before the function call and after the function call, accounting for discards. 
+4. Also, compare the quantity of cards in all non-current player hands. 
+
+An example of this test case can be found in cardtest3.c 
+
+Expected Results
+----------------
+Current player hand count should be incremented by a total of three after the council room card is played and the council room card is discarded.
+Ex. If the player hand count before the card is played is 6, then after the card is played it should be 9. Or, gameState.handCount[currentPlayerNumber] = 9
+
+Non-current player hand counts should each be incremented by one after the current player plays the council room card. No cards are discarded, since it is not their turn. 
+Ex. If non-current player hand counts are 0 before the card is played, then after the card is played they should be 1. Or, gameState.handCount[nonCurrentPlayerNumbers] = 1
+
+Actual Results
+--------------
+gameState.handCount[currentPlayerNumber] = 10. This is too high, the player should draw 4 cards and then discard the council room for net gain of 3 cards. 
+gameState.handCount[nonCurrentPlayerNumbers] = 0. This is too low, each non-current player should draw one card. 
+
+Workarounds/Fixes
+-----------
+There are no workarounds if you don’t have access to the source code. 
+
+If you have access to dominion.c, correct the if condition on line 786 so that the drawCard function runs only when the loop iterator is not equal to the current player’s number. 
+if ( i != currentPlayer )
+
+Attachments
+-----------
+
+See unittestresult.out file for test of council_room card. 
+
+See cardtest3.c for an example test case that successfully reproduces this bug. 
+
+Other Information
+-----------------
+Other tests pass normally, the council room card causes the player to gain one buy, and the card is successfully removed from the player’s hand. 
+
+———***BUG #3***—————
+
+Title:    Bug in adventurerCase() placement of card in discard/played card pile
+
+Class: Minor Bug
+
+Date:       11/10/2017    
+Reported By:   Andrew Bourret
+Email:      bourreta@oregonstate.edu
+
+Product:   Dominion            Version: N/A
+Platform:  OSU Linux Server    Version: Linux flip1.engr.oregonstate.edu 3.10.0-514.26.2.el7.x86_64 #1 SMP Tue Jul 4 15:04:05 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux
+Browser:   N/A                 Version: N/A
+URL:       https://github.com/bourreta/CS362-004-F2017/tree/bourreta-assignment-5/projects/bourreta/grebloveDominion/dominion
+
+Is it reproducible: Yes
+
+Description
+===========
+Testing the adventurer card effect function revealed a bug where the adventurer card is not moved from the player’s hand to discard or played card piles. If merely playing the game, playing the adventurer card will reproduce the bug. 
+
+
+Steps to Produce/Reproduce
+--------------------------
+When playing the game, the bug can be reproduced by playing the adventurer card. 
+
+To reproduce the bug with access to the code:
+1. Initialize a gameState struct with known values. Default values from the initializeGame() function will work well. 
+2. Pass the struct pointer, the number of the adventurer card, and hand position of the card to the cardEffect function. Other parameters can be 0 or NULL. 
+3. Check the playedCardCount variable and playedCard array and compare them to their values before the cardEffect/adventurerCase function call. 
+
+An example of this test case can be found in cardtest1.c 
+
+Expected Results
+----------------
+Current playedCardCount should be incremented. playedCards array should contain the adventurer card.
+Ex. If the player playedCardCount before the card is played is 0, then after the card is played it should be 1. Or, gameState.playedCardCount = 1. gameState.playedCards should contain adventurer card number (7). Or, gamestate.playedCards[0] = 7.
+
+
+Actual Results
+--------------
+gameState.playedCardCount = 0. This is too low, the count should be 1. 
+Also, gameState.playedCards[0] = -1 (or, not equal to 7)
+
+Workarounds/Fixes
+-----------
+There are no workarounds if you don’t have access to the source code. 
+
+If you have access to dominion.c, add a call to “discardCard(handPos, currentPlayer, state, 0)” on line 669 so that the adventurer card is placed in the played cards pile. 
+
+Attachments
+-----------
+
+See unittestresult.out file for test of adventurer card. 
+
+See cardtest1.c for an example test case that successfully reproduces this bug. 
+
+Other Information
+-----------------
+There are also issues with removing the card from the player’s hand, though this is related and likely can be fixed in the same way. Other tests, including the addition of two treasure cards to the player’s hand pass normally.  
