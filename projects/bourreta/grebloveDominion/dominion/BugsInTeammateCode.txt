@@ -51,6 +51,8 @@ There are no workarounds if you don’t have access to the source code.
 If you have access to dominion.c, correct the loop condition on line 677 to run while i is less than 3
 for (i = 0; i < 3; i++)
 
+This bug was found by running a unit test of the smithy function and observing failures in two test results related to player hand and deck count. By extrapolating from these two failures, it became clear that it was an issue with the loop of drawCard().
+
 Attachments
 -----------
 
@@ -116,6 +118,8 @@ There are no workarounds if you don’t have access to the source code.
 If you have access to dominion.c, correct the if condition on line 786 so that the drawCard function runs only when the loop iterator is not equal to the current player’s number. 
 if ( i != currentPlayer )
 
+This bug was uncovered through a unit test of the council room card effect, which revealed failures in two of the tests related to the current and non-current players’ hand counts before and after the card is played. Putting these two issues together, especially where the current player draws one extra card than they should pointed to the bug above. 
+
 Attachments
 -----------
 
@@ -148,7 +152,6 @@ Description
 ===========
 Testing the adventurer card effect function revealed a bug where the adventurer card is not moved from the player’s hand to discard or played card piles. If merely playing the game, playing the adventurer card will reproduce the bug. 
 
-
 Steps to Produce/Reproduce
 --------------------------
 When playing the game, the bug can be reproduced by playing the adventurer card. 
@@ -165,7 +168,6 @@ Expected Results
 Current playedCardCount should be incremented. playedCards array should contain the adventurer card.
 Ex. If the player playedCardCount before the card is played is 0, then after the card is played it should be 1. Or, gameState.playedCardCount = 1. gameState.playedCards should contain adventurer card number (7). Or, gamestate.playedCards[0] = 7.
 
-
 Actual Results
 --------------
 gameState.playedCardCount = 0. This is too low, the count should be 1. 
@@ -176,6 +178,8 @@ Workarounds/Fixes
 There are no workarounds if you don’t have access to the source code. 
 
 If you have access to dominion.c, add a call to “discardCard(handPos, currentPlayer, state, 0)” on line 669 so that the adventurer card is placed in the played cards pile. 
+
+The bug was discovered through a unit test of the adventurer card effect, which revealed failures in one test checking if the adventurer card is placed in the played or discard piles. As it appears the count of these piles never increment when adventurer is played, I started looking for the cause. Comparing the effect to code in other cards, it became clear that discardCard is never called for adventurer whereas it is for other cards. This revealed the cause of the bug described above. 
 
 Attachments
 -----------
