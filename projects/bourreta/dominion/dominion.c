@@ -5,11 +5,11 @@
 #include <math.h>
 #include <stdlib.h>
 
-int adventurerEffect(int drawntreasure, struct gameState *state, int currentPlayer, int cardDrawn, int temphand[]){
+int adventurerEffect(int drawntreasure, struct gameState *state, int currentPlayer, int cardDrawn, int handPos, int temphand[]){
     
-    int z = 0;
-    //BUG ADDED IN LINE BELOW | ORIGINAL: while(drawntreasure<2){  -->  BUG: while(drawntreasure<=2){
-    while(drawntreasure<=2){
+   int z = 0;
+  
+    while(drawntreasure<2){
         if (state->deckCount[currentPlayer] <1){//if the deck is empty we need to shuffle discard and add to deck
             shuffle(currentPlayer, state);
         }
@@ -28,6 +28,8 @@ int adventurerEffect(int drawntreasure, struct gameState *state, int currentPlay
         state->discard[currentPlayer][state->discardCount[currentPlayer]++]=temphand[z-1]; // discard all cards in play that have been drawn
         z=z-1;
     }
+    //discardCard(handPos, currentPlayer, state, 0);
+
     return 0;
     
 }
@@ -788,7 +790,7 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
     {
     case adventurer:
         
-        return adventurerEffect(drawntreasure, state, currentPlayer, cardDrawn, temphand);
+        return adventurerEffect(drawntreasure, state, currentPlayer, cardDrawn, handPos, temphand);
 
     case council_room:
         return council_roomEffect(currentPlayer, state, handPos);
