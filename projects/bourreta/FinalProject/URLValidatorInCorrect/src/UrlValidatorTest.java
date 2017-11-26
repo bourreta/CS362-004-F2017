@@ -88,13 +88,59 @@ public class UrlValidatorTest extends TestCase {
        System.out.println("\t" + urlVal.isValid("https://www.ama zon.com") + " -- http://www.ama zon.com");
        System.out.println("\t" + urlVal.isValid("http://128.193.40.256") + " -- http://128.193.40.256");
    }
-   
-   
+     
    public void testIsValid()
    {
        UrlValidator urlVal = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);
+       String testUrl = null;
+       boolean testValidity = true; 
+       System.out.println("\nProgramming-based testing: testIsValid()");
+       
+       //loop through all permutations of test case
+       for (int a = 0; a < testUrlScheme.length; a++) {
+    	   		for (int b = 0; b < testUrlScheme[a].length; b++) 
+    	   			for(int c = 0; c < testHost.length; c++) {
+    	   				for(int d = 0; d < testHost[c].length; d++) {
+    	   					for(int e = 0; e < testTLD.length; e++) {
+    	   						for(int f = 0; f < testTLD[e].length; f++) {
+    	   							for(int g = 0; g < testPort.length; g++) {
+    	   								for(int h = 0; h < testPort[g].length; h++) {
+    	   									for(int i = 0; i < testPath.length; i++) {
+    	   										for(int j = 0; j < testPath[i].length; j++) {
+    	   											for(int k = 0; k < testQuery.length; k++) {
+    	   												for(int l = 0; l < testQuery[k].length; l++) {
+    	   													//concatenate our testUrl 
+    	   													testUrl = testUrlScheme[a][b] + testHost[c][d] + testTLD[e][f] + testPort[g][h] + testPath[i][j] + testQuery[k][l];
+    	   													//all valid test cases are stored in the array at the 0 index of their respective arrays
+    	   													if(a == 0 && c == 0 && e == 0 && g == 0 && i == 0 && k == 0) { 
+    	   														testValidity = true; 
+    	   													}
+    	   													else {
+    	   														testValidity = false; 
+    	   													}
+    	   													//print out results if reveal an unexpected result, ie. a likely bug. 
+    	   													if(urlVal.isValid(testUrl) != testValidity) {
+    	   										   	   			System.out.println("\t"+testUrl);
+    	   										   	   			System.out.println("\t\t" + "Expected result: " + testValidity + ", Actual result: " + urlVal.isValid(testUrl));
+    	   													}
+    	   												}
+    	   											}
+    	   										}
+    	   									}
+    	   								}
+    	   							}
+    	   						}
+    	   					}
+    	   				}
+    	   			}
+    	   		}
+       }
+   
+   public void testAnyOtherUnitTest()
+   {
+       UrlValidator urlVal = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);
        String site = "http://www.amazon.com";
-       System.out.println("--testIsValid()---");
+       System.out.println("Other Unit Test: change one input at a time");
        String testUrl = null;
 
 	   for(int i = 0; i < allPartitions.length; i++) {
@@ -119,7 +165,7 @@ public class UrlValidatorTest extends TestCase {
        	   			System.out.println("\tTesting Port");
    	   			}
    	   			else if(allPartitions[i][j] == testPathValid || allPartitions[i][j] == testPathInvalid) {
-       	   			System.out.println("\tTesting Port");
+       	   			System.out.println("\tTesting Path");
    	   			}
    	   			else if(allPartitions[i][j] == testQueryValid || allPartitions[i][j] == testQueryInvalid) {
        	   			System.out.println("\tTesting Query");
@@ -150,12 +196,6 @@ public class UrlValidatorTest extends TestCase {
 	   }
    }
    
-   
-   public void testAnyOtherUnitTest()
-   {
-	   
-   }
-   
    /**
     * Create set of tests by taking the testUrlXXX arrays and
     * running through all possible permutations of their combinations.
@@ -163,7 +203,7 @@ public class UrlValidatorTest extends TestCase {
     * @param testObjects Used to create a url.
     */
  
-   	String testUrlSchemeValid[] = {"http://", "https://", "ftp://", "h3t://", ""};
+   	String testUrlSchemeValid[] = {"http://", "https://", "ftp://", "h3t://"};
    	String testUrlSchemeInvalid[] = {"3ht://", "http:/", "http:///", ":"};
    	
    	String testHostValid[] = {"www.google", "3com", "google", "ama-zon", "www2.reddit", "www3.google", "en.wikipedia"};
@@ -172,18 +212,26 @@ public class UrlValidatorTest extends TestCase {
    	String testTLDValid[] = {".com", ".co.uk", ".net", ".biz", ".org", ".edu", ".gov", ".ac", ".ba", ".bb", ".cf", ".de", ".ec", ".hk", ".ma", ".pa", ".sb", ".tc", ".va", ".wf", ".ye", ".za"};
     String testTLDInvalid[] = {".ak", ".ik", "com", "net", "biz", ".zb"};
     
-    String testPortValid[] = {":0", ":80", ":32217", ":65535"};
+    String testPortValid[] = {"" , ":0", ":80", ":32217", ":65535"};
     String testPortInvalid[] = {":-1", ":65536", ":610234", ":80x", ":j80"};
     
-    String testPathValid[] = {"/index1", "/index123", "/index/file/test", "/$78", "/index.html"};
+    String testPathValid[] = {"", "/index1", "/index123", "/index/file/test", "/$78", "/index.html"};
     String testPathInvalid[] = {"/..", "index//file", "/../file1"};
     
-    String testQueryValid[] = {"?id=100", "?mode=test&result=unknown", "?key1=value1;key2=value2"};
+    String testQueryValid[] = {"", "?id=100", "?mode=test&result=unknown", "?key1=value1;key2=value2"};
     String testQueryInvalid[] = {"?id+100", "?mode+test&result_unknown"};
    	
     String validPartitions[][] = {testUrlSchemeValid, testHostValid, testTLDValid, testPortValid, testPathValid, testQueryValid};
-    String invalidPartitions[][] = {testUrlSchemeInvalid, testHostInvalid, testTLDInvalid,testPortInvalid, testPathInvalid, testQueryInvalid};
+    String invalidPartitions[][] = {testUrlSchemeInvalid, testHostInvalid, testTLDInvalid, testPortInvalid, testPathInvalid, testQueryInvalid};
     
     String allPartitions[][][] = {validPartitions, invalidPartitions};
+    
+    String testUrlScheme[][] = {testUrlSchemeValid, testUrlSchemeInvalid};
+    String testHost[][] = {testHostValid, testHostInvalid};
+    String testTLD[][] = {testTLDValid, testTLDInvalid};
+    String testPort[][] = {testPortValid, testPortInvalid};
+    String testPath[][] = {testPathValid, testPathInvalid};
+    String testQuery[][] = {testQueryValid, testQueryInvalid};
+    
 }
 
